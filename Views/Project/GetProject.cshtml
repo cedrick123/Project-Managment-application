@@ -1,0 +1,52 @@
+﻿@model IEnumerable<new_project.Models.Project>
+
+@{
+    ViewData["Title"] = "GetProject";
+}
+
+<h1>GetProject</h1>
+
+<p>
+    @Html.ActionLink("Create New","Create","Project")
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.budget)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.dateOfStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.dateOfFinish)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.budget)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.dateOfStart)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.dateOfFinish)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.projectId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.projectId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

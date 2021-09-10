@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewData["Title"] = "Register";
+}
+@model RegisterViewModel
+<h1>Register</h1>
+@using (Html.BeginForm("Register", "Account", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.TextBoxFor(m => m.email)
+    @Html.TextBoxFor(m => m.userName)
+    @Html.PasswordFor(m => m.password)
+    @Html.DropDownListFor(m => m.role, new SelectList(Enum.GetValues(typeof(Roles))), "Select Role")
+    <input type="submit" value="Submit" />
+
+}
