@@ -44,7 +44,10 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.projectId">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.projectId">Delete</a>
+                <a asp-action="Delete" asp-route-id="@item.projectId">Delete</a> |
+                <a asp-action="GetContract" asp-route-id="@item.projectId">Download Contract</a> |
+                <a asp-action="SendContract" asp-route-id="@item.projectId">Send Contract</a>
+
             </td>
         </tr>
 }

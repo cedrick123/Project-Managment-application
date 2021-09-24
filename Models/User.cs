@@ -6,6 +6,7 @@ namespace new_project.Models
 {
     public class User: IdentityUser<int>
     {
+
         public User(string userName) : base(userName)
         {
         }
@@ -15,10 +16,13 @@ namespace new_project.Models
         }
         
         public Project userProject { get; set; }
-        public Roles role { get; set; }
+        public Role role { get; set; }
 
         [NotMapped]
         public List<Project> projectToChoose { get; set; }
+        [NotMapped]
+        public List<Role> roleToChoose;
+
     }
-    
+
 }

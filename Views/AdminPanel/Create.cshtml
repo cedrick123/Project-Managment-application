@@ -1,0 +1,21 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model NewRoleViewModel
+
+
+
+@using (Html.BeginForm("Create", "AdminPanel", FormMethod.Post))
+{
+    <h1>@Html.EditorFor(model => model.roleName)</h1>
+    @for (int i = 0; i < Model.listOfPermissions.Count; i++)
+    {
+        @Html.DisplayFor(model => model.listOfPermissions[i].name)
+        @Html.HiddenFor(model => model.listOfPermissions[i].name)
+        @Html.CheckBoxFor(model => model.listOfPermissions[i].selected)
+        <br>
+    }
+    <input type="submit" value="Submit" />
+}

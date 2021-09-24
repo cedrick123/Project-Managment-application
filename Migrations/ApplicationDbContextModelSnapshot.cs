@@ -227,7 +227,7 @@ namespace new_project.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int>("role")
+                    b.Property<int?>("roleId")
                         .HasColumnType("int");
 
                     b.Property<int?>("userProjectprojectId")
@@ -242,6 +242,8 @@ namespace new_project.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("roleId");
 
                     b.HasIndex("userProjectprojectId");
 
@@ -301,9 +303,15 @@ namespace new_project.Migrations
 
             modelBuilder.Entity("new_project.Models.User", b =>
                 {
+                    b.HasOne("new_project.Models.Role", "role")
+                        .WithMany()
+                        .HasForeignKey("roleId");
+
                     b.HasOne("new_project.Models.Project", "userProject")
                         .WithMany("workers")
                         .HasForeignKey("userProjectprojectId");
+
+                    b.Navigation("role");
 
                     b.Navigation("userProject");
                 });

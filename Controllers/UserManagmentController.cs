@@ -1,20 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using new_project.Data;
 using new_project.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace new_project.Controllers
 {
+
     public class UserManagmentController : Controller
     {
         private ApplicationDbContext _context;
-        public UserManagmentController(ApplicationDbContext context)
+        private readonly UserManager<User> _userManager;
+        public UserManagmentController(ApplicationDbContext context,UserManager<User> userManager)
         {
+            _userManager = userManager;
             _context = context;
         }
         
@@ -25,7 +27,7 @@ namespace new_project.Controllers
 
         public IActionResult GetUsers()
         {
-            var result = _context.Users.ToList();
+            var result = _context.Users.Include(m => m.userProject).Include(m => m.role).ToList();
             return View(result);
         }
         
@@ -36,7 +38,6 @@ namespace new_project.Controllers
         public ActionResult Edit(int id)
         {
             var result = _context.Users.Find(id);
-            result.projectToChoose = new List<Project>(_context.projects.ToList());
             return View(result);
         }
 
@@ -45,26 +46,31 @@ namespace new_project.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(User user)
         {
-           
-            var entity = _context.Users.Find(user.Id);
+
+            var entity =  _context.Users.Include(m => m.role).First(m => m.Id == user.Id);
+            if(entity.role != null)
+            {
+               await _userManager.RemoveFromRoleAsync(entity, _context.Roles.Find(entity.role.Id).Name);
+            }
             entity.UserName = user.UserName;
             entity.Email = user.Email;
-            entity.role = user.role;
+            entity.role = await _context.Roles.FindAsync(user.role.Id);
             entity.userProject = await _context.projects.FindAsync(user.userProject.projectId);
-            _context.Entry(entity.userProject).State = EntityState.Modified;
+            await _userManager.AddToRoleAsync(entity, entity.role.Name);
+            
+
             
             _context.SaveChanges();
             return RedirectToAction("GetUsers", "UserManagment");            
         }
 
-
+        
         [HttpGet("UserManagment/details/{id:int}")]
-        public async Task<IActionResult> Details(int id)
+        public IActionResult Details(int id)
         {
-            var result = await _context.Users.FindAsync(id);
-            Console.WriteLine(_context.Users.Find(id).userProject.name);
-            return View(_context.Users.Find(id));
+            return View(_context.Users.Include(m=>m.userProject).First(m=>m.Id == id));
         }
+
 
         
     }

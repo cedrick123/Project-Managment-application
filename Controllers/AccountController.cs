@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using new_project.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,39 +9,43 @@ using System.Threading.Tasks;
 
 namespace new_project.Controllers
 {
-    public class AccountController : Controller
+    public class AdminPanelController : Controller
     {
         private SignInManager<User> signInManager;
         private UserManager<User> userManager;
-       public AccountController(SignInManager<User> signInManager, UserManager<User> userManager)
+       public AdminPanelController(SignInManager<User> signInManager, UserManager<User> userManager)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
 
-      public IActionResult Login()
+
+      public IActionResult Login(string returnUrl)
         {
-            return View();
+            return View(new RegisterViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(RegisterViewModel model)
+        public async Task<IActionResult> Login(RegisterViewModel? model, string returnUrl)
         {
-            
-            var result = await signInManager.PasswordSignInAsync(model.userName, model.password,true, false);
-
-            if (result.Succeeded)
+            if(ModelState.IsValid)
             {
-                ViewBag.Message = "Hello" + model.userName+"Welcome on my site";
-                return RedirectToAction("", "Home");
+                var result = await signInManager.PasswordSignInAsync(model.userName, model.password, true, false);
+
+
+                if (String.IsNullOrEmpty(returnUrl))
+                {
+                    return RedirectToAction("", "Home");
+                }
+                else
+                {
+                    return Redirect(returnUrl);
+                }
+                return RedirectToAction("Privacy", "Home");
             }
-            return RedirectToAction("Privacy", "Home");
+            return View(model);
         }
         public IActionResult Logout()
         {
@@ -76,6 +81,7 @@ namespace new_project.Controllers
                     }
                     return RedirectToAction("", "Home");
                 }
+                
             }
             return View(model);
         }

@@ -2,25 +2,21 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using new_project.Models;
+using System;
 
 namespace new_project.Data
 {
     public class ApplicationDbContext : IdentityDbContext<User,Role,int>
     {
-       public DbSet<Project> projects { get; set; }
+       public virtual DbSet<Project> projects { get; set; }
        public ApplicationDbContext(DbContextOptions options):base(options)
         {
 
         }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public ApplicationDbContext()
         {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Project>()
-                .Property(p => p.budget)
-                .HasColumnType("decimal(18,4)");
-        }
 
+        }
     }
 
 }

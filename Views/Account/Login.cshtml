@@ -5,10 +5,16 @@
 }
 @model RegisterViewModel;
 <h1>Login</h1>
-@using (Html.BeginForm("Login", "Account", FormMethod.Post))
+@using (Html.BeginForm("Login", "Account", new { ReturnUrl = Context.Request.Query["ReturnUrl"] }))
 {
     @Html.AntiForgeryToken()
-@Html.TextBoxFor(m => m.userName)
-@Html.PasswordFor(m=>m.password)
-<input type="submit" value="Submit"/>
+    @Html.ValidationMessageFor(m => m.userName)
+    @Html.DisplayNameFor(m => m.userName)
+    @Html.TextBoxFor(m => m.userName)
+    <br />
+    @Html.ValidationMessageFor(m => m.password)
+    @Html.DisplayNameFor(m => m.password)
+    @Html.PasswordFor(m => m.password)
+    <br />
+    <input type="submit" value="Submit" />
 }

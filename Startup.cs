@@ -1,3 +1,6 @@
+using DinkToPdf;
+using DinkToPdf.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -5,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using new_project.Authorization;
 using new_project.Data;
 using new_project.Models;
+using new_project.Services.CustomerContractService;
+using new_project.Services.EmailService;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace new_project
 {
@@ -37,7 +42,25 @@ namespace new_project
 
             services.AddControllersWithViews();
             services.AddIdentity<User, Role>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddSingleton(typeof(IConverter),
+                new SynchronizedConverter(new PdfTools()));
+
+            //services.AddScoped(typeof(Repository<>),typeof(RepositoryFor<>));
+            //services.AddScoped<Repository<Project>, RepositoryFor<Project>>();
+            services.AddScoped<ContractService, ContractServiceForPdf>();
+            services.AddTransient(typeof(Repository<>), typeof(RepositoryFor<>));
+
+
+
+
+
+            services.Configure<EmailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddTransient<MailService, MailServiceImplementation>();
+            services.AddScoped<IAuthorizationHandler, ProjectAuthorizationHandler>();
+
+            //services.AddControllers();
 
         }
         private async Task CreateRoles(RoleManager<Role> roleManager)
@@ -68,7 +91,6 @@ namespace new_project
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(root, "Admin");
-                   // Console.WriteLine("CZe chyba git");
                 }
             }
             
@@ -102,8 +124,9 @@ namespace new_project
 
             app.UseRouting();
 
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {

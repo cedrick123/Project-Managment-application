@@ -7,10 +7,23 @@
 @using (Html.BeginForm("Register", "Account", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
+    @Html.DisplayNameFor(m => m.email)
     @Html.TextBoxFor(m => m.email)
+    @Html.ValidationMessageFor(m => m.email)
+
+    <br />
+    @Html.DisplayNameFor(m => m.userName)
     @Html.TextBoxFor(m => m.userName)
+    @Html.ValidationMessageFor(m => m.userName)
+
+    <br />
+    @Html.DisplayNameFor(m => m.password)
     @Html.PasswordFor(m => m.password)
+    @Html.ValidationMessageFor(m => m.password)
+    <br />
+    @Html.DisplayNameFor(m => m.role)
     @Html.DropDownListFor(m => m.role, new SelectList(Enum.GetValues(typeof(Roles))), "Select Role")
+    <br />
     <input type="submit" value="Submit" />
 
 }
